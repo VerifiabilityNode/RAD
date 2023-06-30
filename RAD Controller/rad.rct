@@ -56,5 +56,7 @@ connection ctrl_radcontrol on garmentAtHand to Franka on garmentAtHand ( _async 
 	connection ctrl_radcontrol on garmentGripped to Franka on garmentGripped ( _async )
 	connection ctrl_radcontrol on orientedGarment to Franka on orientedGarment ( _async )
 connection ctrl_radcontrol on forceApplied to Franka on forceApplied ( _async )
+connection Franka on userPresent to ctrl_radcontrol on userPresent ( _async )
+	connection ctrl_radcontrol on gripTimeoutHRI to Franka on gripTimeoutHRI ( _async )
 }
 

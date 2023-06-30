@@ -40,6 +40,7 @@ event garmentAtHand
 	event arrivedAtGarment
 	event garmentGripped
 	event orientedGarment
+event gripTimeoutHRI
 }
 
 interface SensorOperations {
@@ -96,6 +97,7 @@ interface MovementCoordination {
 	event resetMovement
 	event movementStarted
 	event movementEnded
+event checkMovementAllowed
 }
 
 interface SafetyModeControl {

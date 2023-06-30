@@ -96,6 +96,7 @@ state Awaiting {
 	transition t1 {
 		from Allowing
 		to Awaiting
+		trigger checkMovementAllowed
 		condition not emergencyStopped /\ not collisionStopped /\ not environmentallyStopped
 		action allowMovement
 	}
@@ -104,7 +105,9 @@ state Awaiting {
 		to Allowing
 		trigger 
 	
+	
 	movementOccurred
+		action noticedMovementOccurred
 	}
 state NotStarted {
 	}

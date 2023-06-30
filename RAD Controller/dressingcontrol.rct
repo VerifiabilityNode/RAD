@@ -11,29 +11,9 @@ stm SDressingControl {
 	
 	var currentJoint : int = 2
 	state GarmentAcquisition {
-		state LookingForGarment {
-			entry detectGarment ( )
-		}
 		initial i0
 
-		state EngageGarment {
-			entry grip()
-		}
-		transition t0 {
-			from i0
-			to LookingForGarment
-		}
-		transition t1 {
-			from LookingForGarment
-			to Moving
-			trigger 
-		
-		
-			
-			
-			garmentDetected ? garmentPosition
-			action movementStart ! garmentPosition
-		}
+		final f0
 
 		transition t5 {
 			from j0
@@ -41,35 +21,20 @@ stm SDressingControl {
 		condition isHandlingCorrect
 			action orientedGarment
 		}
-	state Moving {
-		}
-		final f0
-
-		transition t2 {
-			from Moving
-			to EngageGarment
-			trigger 
-		movementEnd
-		}
-	state confirmGripCorrect {
+		state confirmGripCorrect {
 			entry checkCorrectHandling ( )
 		}
 		junction j0
 
-		junction j1
+		state Gripped {
+		}
+
 		transition t3 {
 			from confirmGripCorrect
 			to j0
 			trigger 
 		
 		handlingCorrect ? isHandlingCorrect
-		}
-		transition t4 {
-			from EngageGarment
-			to j1
-			trigger 
-		
-		gripCorrect ? isGripperEngaged
 		}
 		transition t7 {
 			from j0
@@ -80,25 +45,69 @@ stm SDressingControl {
 		not isHandlingCorrect
 			action reorientGarment ( )
 		}
-		transition t8 {
-			from j1
-			to confirmGripCorrect
-			condition isGripperEngaged
-			action garmentGripped
-		}
-		state Gripped {
-		}
-		transition t9 {
-			from j1
-			to LookingForGarment
-			condition not isGripperEngaged
-		}
-	entry garmentAcquired = false
-	transition t6 {
+		transition t6 {
 			from Gripped
 			to f0
 			action garmentAcquired = true
 		}
+	state GripGarment {
+			state LookingForGarment {
+				entry detectGarment ( )
+			}
+			state Moving {
+			entry movementStart ! garmentPosition <{ 0 }
+			}
+			state EngageGarment {
+				entry grip ( )
+			}
+			initial i0
+			state CheckGrip {
+			}
+			transition t2 {
+				from Moving
+				to EngageGarment
+				trigger movementEnd
+			}
+			transition t1 {
+				from LookingForGarment
+				to Moving
+				trigger 
+				garmentDetected ? garmentPosition
+				<{ 1
+			}
+			}
+			transition t0 {
+				from i0
+				to LookingForGarment
+			}
+			transition t3 {
+				from EngageGarment
+				to CheckGrip
+				trigger gripCorrect ? isGripperEngaged
+			}
+			transition t4 {
+				from CheckGrip
+				to LookingForGarment
+				condition not isGripperEngaged
+			}
+		}
+		transition t0 {
+			from i0
+			to GripGarment
+		}
+		transition t1 {
+			from GripGarment
+			to confirmGripCorrect
+			condition isGripperEngaged
+			action garmentGripped
+		}
+		transition t2 {
+			from GripGarment
+			to f0
+			condition sinceEntry ( GarmentAcquisition::GripGarment ) > 6
+			action gripTimeoutHRI
+		}
+	entry garmentAcquired = false
 	}
 	state GarmentToUser {
 		initial i0

@@ -89,5 +89,7 @@ connection stm_dressing on garmentAtHand to CDressingControl on garmentAtHand ( 
 connection stm_movement on movementStarted to stm_stop on movementStarted connection stm_movement on movementEnded to stm_stop on movementEnded connection stm_stop on resetMovement to stm_movement on resetMovement connection stm_movement on movementOccurred to stm_stop on movementOccurred connection stm_stop on allowMovement to stm_movement on allowMovement connection stm_dressing on checkHRI to stm_stop on checkHRI
 	connection stm_stop on allowHRI to stm_dressing on allowHRI
 connection CDressingControl on userPresent to stm_environment on userPresent ( _async )
+connection stm_dressing on gripTimeoutHRI to CDressingControl on gripTimeoutHRI ( _async )
+connection stm_movement on checkMovementAllowed to stm_stop on checkMovementAllowed
 }
 

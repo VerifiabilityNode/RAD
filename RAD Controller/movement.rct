@@ -38,8 +38,8 @@ uses FrankaArmEvents uses ForceEvents
 		
 		
 		
+		
 		movementStart ? vtarget
-		action arrivedAtTarget = false
 	}
 	transition t6 {
 		from NotEngaged
@@ -53,8 +53,8 @@ uses FrankaArmEvents uses ForceEvents
 		
 		
 		
+		
 		forceStart ? vtarget
-		action arrivedAtTarget = false
 	}
 	transition t2 {
 		from FreeMovement
@@ -75,7 +75,7 @@ requires PIDState
 	}
 
 	state FreeMovement {
-		entry movementInitiated ; movementStarted ; PIDInitialize ( vtarget )
+		entry movementInitiated <{ 0 } ; arrivedAtTarget = false ; movementStarted ; PIDInitialize ( vtarget )
 		
 		initial i0
 
@@ -84,7 +84,7 @@ requires PIDState
 		}
 
 		state SensePosition {
-			entry endEffectorPosition ? vcurrent ; PIDUpdate ( vcurrent )
+			entry endEffectorPosition ? vcurrent ; PIDUpdate ( vcurrent ) ; checkMovementAllowed
 		}
 		state s0 {
 			entry wait ( step ) ; stepMoved ; arrivedAtTarget = dist ( vtarget , vcurrent ) <= EPSILON
@@ -128,13 +128,13 @@ requires PIDState
 	state ForceApplication {
 		initial i0
 		state CheckForce {
-			entry forceEndEffector ? fcurrent ; PIDUpdate ( fcurrent )
+			entry forceEndEffector ? fcurrent ; PIDUpdate ( fcurrent ) ; checkMovementAllowed
 		}
 		state Move {
 			entry setEEForces ( o )
 		}
 
-		entry forceInitiated ; movementStarted ; ftarget = targetForces ( vcurrent , vtarget , TARGET_TOTAL_FORCE ) ; PIDInitialize ( ftarget )
+		entry forceInitiated <{ 0 } ; movementStarted ; arrivedAtTarget = false ; ftarget = targetForces ( vcurrent , vtarget , TARGET_TOTAL_FORCE ) ; PIDInitialize ( ftarget )
 	state s0 {
 			entry wait ( step ) ; forceApplied ; arrivedAtTarget = dist ( vtarget , vcurrent ) <= EPSILON
 		}
